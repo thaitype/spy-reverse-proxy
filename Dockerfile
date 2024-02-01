@@ -33,7 +33,7 @@ ENV PORT=3333
 ENV NODE_VERSION 20.11.0-r0
 ENV NPM_VERSION 10.2.5-r0
 
-COPY --from=build /app /app
+COPY --from=build /app/dist /app
 
 # COPY --from=prod-deps /app/node_modules /app/node_modules
 # COPY --from=build /app/dist /app
