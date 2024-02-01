@@ -13,9 +13,9 @@ COPY --chown=node:node . ./app
 WORKDIR /app
 USER node
 
-# RUN pnpm install --frozen-lockfile
-FROM base AS prod-deps
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+# # RUN pnpm install --frozen-lockfile
+# FROM base AS prod-deps
+# RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -33,8 +33,10 @@ ENV PORT=3333
 ENV NODE_VERSION 20.11.0-r0
 ENV NPM_VERSION 10.2.5-r0
 
-COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY --from=build /app/dist /app
+COPY --from=build /app /app
+
+# COPY --from=prod-deps /app/node_modules /app/node_modules
+# COPY --from=build /app/dist /app
 
 RUN apk add --update --no-cache nodejs=$NODE_VERSION
 
