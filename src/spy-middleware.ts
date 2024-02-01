@@ -1,7 +1,7 @@
-import 'dotenv/config';
+
 import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
-import { schema } from './env.schema.js';
-const env = schema.parse(process.env);
+import { getEnv } from './env.js';
+const env = getEnv();
 
 /**
  * Configure proxy middleware
