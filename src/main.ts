@@ -1,14 +1,17 @@
 import express from 'express';
+import { spyMiddleware } from './spy-middleware.js';
+import { extractErorMessage } from './utils.js';
 
-const app = express();
-const port = process.env.PORT ?? 3000;
+async function main() {
+  const app = express();
+  const port = process.env.PORT ?? 3333;
 
-// Define a simple route
-app.get('/', (req, res) => {
-  res.send('Hello, World! 2');
-});
+  app.use(spyMiddleware);
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+  // Start the server
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
+
+main().catch(extractErorMessage);
