@@ -1,6 +1,6 @@
 import express from 'express';
-import { spyMiddleware } from './spy-middleware.js';
-import { extractErorMessage } from './utils.js';
+import { spyMiddleware } from './spy-middleware';
+import { extractErorMessage } from './utils';
 
 async function main() {
   const app = express();

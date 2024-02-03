@@ -36,7 +36,7 @@ ENV NPM_VERSION 10.2.5-r0
 # Make sure `"type": "module"` is set in package.json
 COPY --from=build /app/package.json /app/package.json
 # Production dependencies
-COPY --from=build /app/node_modules /app/node_modules
+# COPY --from=build /app/node_modules /app/node_modules
 # Application
 COPY --from=build /app/dist /app
 
@@ -73,4 +73,4 @@ RUN addgroup -g 1000 node \
 
 USER node
 
-CMD [ "node", "app/main.js" ]
+CMD [ "node", "app/main.cjs" ]
