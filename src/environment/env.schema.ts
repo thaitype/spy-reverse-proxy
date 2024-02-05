@@ -16,11 +16,17 @@ const azureTableConfig = {
   SRP_DATA_AZURE_TABLE_NAME_PREFIX: z.string().default('SpyReverseProxy'),
 };
 
+const trimEndingSlash = (val: string) => val.trim().replace(/\/$/, '');
+
 export const environmentSchema = z.object({
   /**
    * the target URL that want the spy server to proxy to
    */
-  SRP_UPSTREAM_URL: z.string(),
+  SRP_UPSTREAM_URL: z.preprocess(val => {
+    if (val === '' || val === undefined) throw new Error('SRP_UPSTREAM_URL is required');
+    if (typeof val !== 'string') throw new Error('SRP_UPSTREAM_URL must be a string');
+    return trimEndingSlash(val);
+  }, z.string()),
   /**
    * Azure Table configuration
    */
