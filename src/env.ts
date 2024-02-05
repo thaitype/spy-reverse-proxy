@@ -1,12 +1,13 @@
 import 'dotenv/config';
-import { schema } from './env.schema';
+import { environmentSchema } from './env.schema';
 import { extractErorMessage } from './utils';
+import { zodParser } from '@thaitype/record-parser/zod';
 /**
  * Get environment variables
  */
 export function getEnv() {
   try {
-    return schema.parse(process.env);
+    return zodParser(environmentSchema).parse(process.env);
   } catch (error) {
     console.error('Environment variables are not set correctly');
     console.error(extractErorMessage(error));
