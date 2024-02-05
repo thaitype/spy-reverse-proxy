@@ -11,6 +11,7 @@ export interface HandleResponseParams {
 export class SpyPlugin {
   async handleResponse(params: HandleResponseParams): Promise<string> {
     const { responseBuffer, req, res } = params;
+
     res.setHeader('Powered-by', 'thaitype/spy-reverse-proxy');
 
     // if (req.url === env.TARGET_PATH) {

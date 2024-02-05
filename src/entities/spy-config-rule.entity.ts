@@ -6,6 +6,13 @@ export interface SpyConfigRuleEntity {
    */
   ruleName: string;
   /**
+   * Environment name
+   *
+   * For supporting multiple environments
+   * @default `default`
+   */
+  environment?: string;
+  /**
    * the target URL that want the spy server to proxy to
    */
   upstreamUrl: string;

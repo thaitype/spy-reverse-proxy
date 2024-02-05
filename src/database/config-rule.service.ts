@@ -1,7 +1,9 @@
 import { logger } from '@/logger';
 import type { SpyConfigRuleEntityAzureTable } from '../entities/spy-config-rule.entity';
-import type { AzureTable } from './azure-table';
-import { v4 as uuidv4 } from 'uuid';
+import { AzureTable } from './azure-table';
+import invariant from 'tiny-invariant';
+import { TableClient } from '@azure/data-tables';
+import { env } from '@/environment';
 
 export class SpyConfigRuleService {
   constructor(public readonly tableClient: AzureTable<SpyConfigRuleEntityAzureTable>) {}
@@ -15,8 +17,8 @@ export class SpyConfigRuleService {
     await this.tableClient.createTable();
     await this.tableClient.insert({
       ...rule,
-      partitionKey: rule.upstreamUrl,
-      rowKey: uuidv4(),
+      partitionKey: rule.environment ?? 'default',
+      rowKey: rule.ruleName,
     });
   }
 }
@@ -27,6 +29,7 @@ export const sampleRuleName = 'sample';
  * Fix later
  */
 export async function isSampleRuleExist(service: SpyConfigRuleService): Promise<boolean> {
+  await service.tableClient.createTable();
   const result = service.tableClient.list({
     filter: `ruleName eq '${sampleRuleName}'`,
   });
@@ -56,4 +59,20 @@ export async function initSampleRule(service: SpyConfigRuleService) {
     plugin: 'response-transformer',
     data: 'replace.status_code=400',
   });
+  logger.info('Sample rule initialized');
 }
+
+export function getSpyConfigRuleInstance() {
+  invariant(env.srpDataAzureTableConnectionString, 'Azure table connection string is required');
+  const tableClient = TableClient.fromConnectionString(
+    env.srpDataAzureTableConnectionString,
+    `${env.srpDataAzureTableNamePrefix}SpyConfigRule`
+  );
+  const azureTable = new AzureTable<SpyConfigRuleEntityAzureTable>(tableClient);
+  return new SpyConfigRuleService(azureTable);
+}
+/**
+ * The spy config rule service
+ * Singleton instance
+ */
+export const spyConfigRuleService = getSpyConfigRuleInstance();

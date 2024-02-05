@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-export const environmentSchema = z.object({
-  /**
-   * the target URL that want the spy server to proxy to
-   */
-  SRP_UPSTREAM_URL: z.string(),
+const azureTableConfig = {
   /**
    * The connection string for Azure Table Storage
    * @example DefaultEndpointsProtocol=https;AccountName=ACCOUNT_NAME;AccountKey=ACCOUNT_KEY;TableEndpoint=TABLE_ENDPOINT;
@@ -13,6 +9,22 @@ export const environmentSchema = z.object({
    * Set this to enable the spy server to write/read from Azure Table Storage
    */
   SRP_DATA_AZURE_TABLE_CONNECTION_STRING: z.string().optional(),
+  /**
+   * The prefix of the Azure Table name
+   * @default `SpyReverseProxy`
+   */
+  SRP_DATA_AZURE_TABLE_NAME_PREFIX: z.string().default('SpyReverseProxy'),
+};
+
+export const environmentSchema = z.object({
+  /**
+   * the target URL that want the spy server to proxy to
+   */
+  SRP_UPSTREAM_URL: z.string(),
+  /**
+   * Azure Table configuration
+   */
+  ...azureTableConfig,
   /**
    * The port that the spy server will listen to
    */
