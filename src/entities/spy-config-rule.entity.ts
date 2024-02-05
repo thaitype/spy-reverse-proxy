@@ -22,8 +22,10 @@ export interface SpyConfigRuleEntity {
   path: string;
   /**
    * the HTTP method that the spy server will match
+   * 
+   * When undefined, the spy server will match all methods
    */
-  method: string;
+  method?: string;
   /**
    * enable or disable the rule
    */
