@@ -1,7 +1,6 @@
 
 import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
-import { getEnv } from './env';
-const env = getEnv();
+import { env } from './env';
 
 /**
  * Configure proxy middleware

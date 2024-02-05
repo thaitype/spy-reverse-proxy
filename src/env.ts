@@ -7,10 +7,14 @@ import { zodParser } from '@thaitype/record-parser/zod';
  */
 export function getEnv() {
   try {
-    return zodParser(environmentSchema).parse(process.env);
+    return zodParser(environmentSchema, {
+      caseConversion: 'upper',
+    }).parse(process.env);
   } catch (error) {
     console.error('Environment variables are not set correctly');
     console.error(extractErorMessage(error));
     process.exit(1);
   }
 }
+
+export const env = getEnv();
