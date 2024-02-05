@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { schema } from './env.schema.js';
-import { extractErorMessage } from './utils.js';
+import { schema } from './env.schema';
+import { extractErorMessage } from './utils';
 /**
  * Get environment variables
  */

@@ -1,6 +1,6 @@
 
 import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
-import { getEnv } from './env.js';
+import { getEnv } from './env';
 const env = getEnv();
 
 /**
