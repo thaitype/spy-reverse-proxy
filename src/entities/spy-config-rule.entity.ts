@@ -29,7 +29,7 @@ export interface SpyConfigRuleEntity {
   /**
    * enable or disable the rule
    */
-  condition: boolean;
+  condition?: boolean;
   /**
    * the plugin name that the spy server will use to transform
    */

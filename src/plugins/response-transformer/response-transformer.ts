@@ -21,9 +21,16 @@ export class ResponseTransformerPlugin {
 
   async handleResponse(params: HandleResponseParams) {
     const { responseBuffer } = params;
-    // if (req.url === env.TARGET_PATH) {
-    //   res.statusCode = 500;
-    // }
+    const condition = this.rule.condition ?? true;
+    if(!this.rule.data || !condition) return responseBuffer.toString();
+
+    logger.info(`Response transformer plugin is running for rule: ${this.rule.ruleName}`);
+    // Basic response transformer
+    const [action, value] = this.rule.data.split('=');
+    if(action === 'replace.status_code') {
+      logger.info(`Replacing status code to ${value}`);
+      params.res.statusCode = parseInt(value);
+    }
     return responseBuffer.toString();
   }
 }
