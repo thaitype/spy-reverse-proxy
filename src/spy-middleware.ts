@@ -1,4 +1,3 @@
-
 import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
 import { env } from './env';
 
