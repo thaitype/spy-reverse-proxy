@@ -1,7 +1,8 @@
 import express from 'express';
 import { spyMiddleware } from './spy-middleware';
 import { extractErorMessage } from './utils';
-import { env } from './env';
+import { env } from '@/environment';
+import { logger } from '@/logger';
 
 async function main() {
   const app = express();
@@ -15,7 +16,7 @@ async function main() {
 
   // Start the server
   app.listen(port, () => {
-    console.log(`Server is running on: http://localhost:${port}`);
+    logger.info(`Server is running on: http://localhost:${port}`);
   });
 }
 

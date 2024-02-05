@@ -1,6 +1,6 @@
 import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
-import { env } from './env';
-
+import { env } from '@/environment';
+import { stringLogger } from '@/logger';
 /**
  * Configure proxy middleware
  */
@@ -20,4 +20,5 @@ export const spyMiddleware = createProxyMiddleware({
     return responseBuffer.toString();
   }),
   logLevel: 'debug',
+  logProvider: () => stringLogger
 });

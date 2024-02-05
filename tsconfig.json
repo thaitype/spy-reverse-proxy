@@ -29,6 +29,15 @@
       "lib": ["es2022", "dom", "dom.iterable"],
       /* If your code doesn't run in the DOM: */
       // "lib": ["es2022"]
+      /* using absolute path */
+      "baseUrl": "./",
+      "paths": {
+        "@/database": ["src/database/index.ts"],
+        "@/entities": ["src/entities/index.ts"],
+        "@/plugins": ["src/plugins/index.ts"],
+        "@/logger": ["src/logger/index.ts"],
+        "@/environment": ["src/environment/index.ts"],
+      }
     },
     "include": ["**/*.ts"],
   }
