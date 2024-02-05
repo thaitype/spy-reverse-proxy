@@ -4,15 +4,26 @@ import { AzureTable } from './azure-table';
 import invariant from 'tiny-invariant';
 import { TableClient } from '@azure/data-tables';
 import { env } from '@/environment';
+import { ODataExpression } from 'ts-odata-client';
 
 export class SpyConfigRuleService {
+  private oDataExpresion = ODataExpression.forV4<SpyConfigRuleEntityAzureTable>();
+
   constructor(public readonly tableClient: AzureTable<SpyConfigRuleEntityAzureTable>) {}
 
   async listAllMatchUpstreamUrlRules(upstreamUrl: string) {
     await this.tableClient.createTable();
-    return this.tableClient.list({
-      filter: `(upstreamUrl eq '') or (upstreamUrl eq null) or (upstreamUrl eq '${upstreamUrl}') or (upstreamUrl eq '${upstreamUrl}/')`,
-    });
+    return this.tableClient.list(
+      this.oDataExpresion
+        .filter(p =>
+          p.upstreamUrl
+            .$equals('')
+            .or(p.upstreamUrl.$equals(null))
+            .or(p.upstreamUrl.$equals(upstreamUrl))
+            .or(p.upstreamUrl.$equals(`${upstreamUrl}/`))
+        )
+        .build()
+    );
   }
 
   async insertRule(rule: Omit<SpyConfigRuleEntityAzureTable, 'partitionKey' | 'rowKey'>) {

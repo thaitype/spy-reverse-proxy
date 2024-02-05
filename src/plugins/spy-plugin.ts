@@ -18,19 +18,15 @@ export class SpyPlugin {
 
     res.setHeader('Powered-by', 'thaitype/spy-reverse-proxy');
     const rules = await spyConfigRuleService.listAllMatchUpstreamUrlRules(this.upstreamUrl);
+    // TODO: Fix later, this might be slow if there are many rules
     for await (const rule of rules) {
-      logger.info(`Rule: ${rule.ruleName} with: ${rule.upstreamUrl} and ${rule.path}`);
       if (rule.plugin === ResponseTransformerPlugin.name) {
         const plugin = new ResponseTransformerPlugin(rule);
         return plugin.handleResponse(params);
       }
     }
 
-    // if (req.url === env.TARGET_PATH) {
-    //   res.statusCode = 500;
-    // }
     logger.info(`No rule found for ${req.url}`);
-
     return responseBuffer.toString();
   }
 }
