@@ -1,6 +1,11 @@
 import { env } from '@/environment';
 import pino from 'pino';
+import fs from 'fs';
 
+const logDir = '.log';
+
+if(!fs.existsSync(logDir))
+  fs.mkdirSync(logDir, { recursive: true });
 export const logger = pino({
   level: env.srpLoggerLevel,
   transport: {
@@ -9,14 +14,14 @@ export const logger = pino({
         level: 'error',
         target: 'pino/file',
         options: {
-          destination: 'error.log',
+          destination: logDir + '/error.log',
         },
       },
       {
         level: 'info',
         target: 'pino/file',
         options: {
-          destination: 'info.log',
+          destination: logDir + '/info.log',
         },
       },
       {
