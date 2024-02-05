@@ -1,6 +1,6 @@
 import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
 import { env } from '@/environment';
-import { stringLogger } from '@/logger';
+import { logger, stringLogger } from '@/logger';
 /**
  * Configure proxy middleware
  */
@@ -15,7 +15,7 @@ export const spyMiddleware = createProxyMiddleware({
     //   res.statusCode = 500;
     // }
 
-    console.log(`path`, req.url);
+    logger.info(`Proxying request to: ${req.url}`);
 
     return responseBuffer.toString();
   }),
