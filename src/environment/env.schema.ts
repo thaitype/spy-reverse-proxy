@@ -33,9 +33,9 @@ export const environmentSchema = z.object({
   SRP_ADMIN_ROOT_PATH: z.string().default('/srp'),
   /**
    * Logger level
-   * 
+   *
    * Options: "fatal" | "error" | "warn" | "info" | "debug" | "trace"
-   * 
+   *
    * The package uses the [pino](https://github.com/pinojs/pino) package internally.
    */
   SRP_LOGGER_LEVEL: z.string().default('info'),
