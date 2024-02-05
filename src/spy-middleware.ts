@@ -11,7 +11,7 @@ export const spyMiddleware = createProxyMiddleware({
   changeOrigin: true, // for vhosted sites, changes host header to match to target's host
   selfHandleResponse: true, // manually call res.end(); IMPORTANT: res.end() is called internally by responseInterceptor()
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-    return await new SpyPlugin().handleResponse({ responseBuffer, proxyRes, req, res });
+    return await new SpyPlugin(env.srpUpstreamUrl).handleResponse({ responseBuffer, proxyRes, req, res });
   }),
   /**
    * TODO: Validate input later

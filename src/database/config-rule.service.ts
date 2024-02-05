@@ -8,9 +8,11 @@ import { env } from '@/environment';
 export class SpyConfigRuleService {
   constructor(public readonly tableClient: AzureTable<SpyConfigRuleEntityAzureTable>) {}
 
-  async listRules() {
+  async listAllMatchUpstreamUrlRules(upstreamUrl: string) {
     await this.tableClient.createTable();
-    return this.tableClient.list();
+    return this.tableClient.list({
+      filter: `(upstreamUrl eq '') or (upstreamUrl eq null) or (upstreamUrl eq '${upstreamUrl}') or (upstreamUrl eq '${upstreamUrl}/')`,
+    });
   }
 
   async insertRule(rule: Omit<SpyConfigRuleEntityAzureTable, 'partitionKey' | 'rowKey'>) {
