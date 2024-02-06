@@ -41,7 +41,7 @@ export class SpyConfigRuleService {
 export const sampleRuleName = 'sample';
 
 /***
- * Fix later
+ * TODO: Fix later the way to check if the sample rule exists
  */
 export async function isSampleRuleExist(service: SpyConfigRuleService): Promise<boolean> {
   await service.tableClient.createTable();

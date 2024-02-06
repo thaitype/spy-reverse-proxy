@@ -1,5 +1,6 @@
 import { env } from '@/environment';
 import pino from 'pino';
+import pinoHttp from 'pino-http';
 import fs from 'fs';
 
 const logDir = '.log';
@@ -25,10 +26,23 @@ export const logger = pino({
       },
       {
         level: 'debug',
+        target: 'pino/file',
+        options: {
+          destination: logDir + '/debug.log',
+        },
+      },
+      {
+        level: 'debug',
         target: 'pino-pretty',
       },
     ],
   },
+});
+
+export const httpLogger = pinoHttp({
+  logger,
+  level: env.srpLoggerLevel as pino.LevelWithSilent,
+  useLevel: 'debug',
 });
 
 export const stringLogger = {
