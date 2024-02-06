@@ -48,6 +48,7 @@
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "http-proxy-middleware": "^2.0.6",
+    "lru-cache": "^10.2.0",
     "pino": "^8.18.0",
     "pino-http": "^9.0.0",
     "pino-pretty": "^10.3.1",

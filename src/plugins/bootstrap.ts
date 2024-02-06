@@ -3,13 +3,12 @@ import { env } from '../environment';
 import { httpLogger, logger } from '../logger';
 import type express from 'express';
 import { spyMiddleware } from './spy-middleware';
-import fs from 'fs';
-import fsPromise from 'fs/promises';
 import type { SpyConfigRuleEntityAzureTable } from '@/entities';
 import { SpyRule } from './spy-rule';
+import { cache } from '@/cache';
 
 export async function initRulePlugin() {
-  await handleRootAdmin(env.srpUpstreamUrl);
+  await getSpyConfig(env.srpUpstreamUrl);
   await initSampleRule(spyConfigRuleService);
   logger.info(`Start proxy with upstream url: ${env.srpUpstreamUrl}`);
 }
@@ -19,7 +18,7 @@ export async function registerSpyPlugin(app: express.Application) {
 
   app.use(httpLogger);
   app.get(env.srpAdminRootPath, async (req, res) => {
-    await handleRootAdmin(env.srpUpstreamUrl);
+    await getSpyConfig(env.srpUpstreamUrl);
     res.send('Welcome to SRP Admin');
   });
   app.use(spyMiddleware);
@@ -30,17 +29,20 @@ export async function registerSpyPlugin(app: express.Application) {
  * - Revalidate rule from data store and cache it.
  */
 
-const rootTmpDir = '.srp/configs';
-
-export async function handleRootAdmin(upstreamUrl: string) {
-  if (!fs.existsSync(rootTmpDir)) fs.mkdirSync(rootTmpDir, { recursive: true });
+export async function getSpyConfig(upstreamUrl: string) {
   const rawRules = await spyConfigRuleService.listAllMatchUpstreamUrlRules(upstreamUrl);
   const rules: SpyConfigRuleEntityAzureTable[] = [];
   // TODO: Fix later, this might be slow if there are many rules
   for await (const rawRule of rawRules) {
     rules.push(rawRule);
   }
-  const ruleConfig = new SpyRule(rules).parse();
-  const ruleConfigPath = `${rootTmpDir}/rule-config.json`;
-  fsPromise.writeFile(ruleConfigPath, JSON.stringify(ruleConfig, null, 2), 'utf8');
+
+  return new SpyRule(rules).parse();
+}
+
+export function setSpyConfig() {
+  if (cache.get('spyConfig') !== undefined) {
+    cache.set('spyConfig', JSON.stringify(getSpyConfig(env.srpUpstreamUrl)));
+  }
+  logger.info('Set spy config in cache');
 }
