@@ -1,3 +1,3 @@
 export * from './response-transformer';
-export * from './spy-plugin';
+export * from './spy-rule-plugin';
 export * from './rule-matcher';

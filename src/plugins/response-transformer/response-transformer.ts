@@ -1,7 +1,7 @@
 import type { SpyConfigRuleEntity } from '@/entities';
 import { logger } from '@/logger';
 import { isMatchedRule } from '../rule-matcher';
-import type { HandleResponseParams } from '../spy-plugin';
+import type { HandleResponseParams } from '../spy-rule-plugin';
 import { ResponseTransformerExpression } from './response-transformer-expression';
 
 export class ResponseTransformerPlugin {

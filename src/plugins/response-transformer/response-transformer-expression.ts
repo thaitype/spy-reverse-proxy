@@ -1,4 +1,4 @@
-import type { HandleResponseParams } from '../spy-plugin';
+import type { HandleResponseParams } from '../spy-rule-plugin';
 import { ReplaceStatusCodeActionExpression } from './action-expressions';
 
 export type ExpressionValidateResult =

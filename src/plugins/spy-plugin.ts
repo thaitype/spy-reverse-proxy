@@ -1,32 +1,28 @@
-import { spyConfigRuleService } from '@/database';
-import { logger } from '@/logger';
-import type { IncomingMessage, ServerResponse } from 'node:http';
-import { ResponseTransformerPlugin } from './response-transformer';
+import { initSampleRule, spyConfigRuleService } from '../database';
+import { env } from '../environment';
+import { httpLogger, logger } from '../logger';
+import type express from 'express';
+import { spyMiddleware } from './spy-middleware';
 
-export interface HandleResponseParams {
-  responseBuffer: Buffer;
-  proxyRes: IncomingMessage;
-  req: IncomingMessage;
-  res: ServerResponse<IncomingMessage>;
+export async function initRulePlugin() {
+  console.log('initRulePlugin');
+  await initSampleRule(spyConfigRuleService);
+  logger.info(`Start proxy with upstream url: ${env.srpUpstreamUrl}`);
 }
 
-export class SpyPlugin {
-  constructor(protected upstreamUrl: string) {}
+export async function registerSpyPlugin(app: express.Application) {
+  await initRulePlugin();
 
-  async handleResponse(params: HandleResponseParams): Promise<string> {
-    const { responseBuffer, req, res } = params;
+  app.use(httpLogger);
+  app.get(env.srpAdminRootPath, handleRootAdmin);
+  app.use(spyMiddleware);
+}
 
-    res.setHeader('Powered-by', 'thaitype/spy-reverse-proxy');
-    const rules = await spyConfigRuleService.listAllMatchUpstreamUrlRules(this.upstreamUrl);
-    // TODO: Fix later, this might be slow if there are many rules
-    for await (const rule of rules) {
-      if (rule.plugin === ResponseTransformerPlugin.name) {
-        const plugin = new ResponseTransformerPlugin(rule);
-        return plugin.handleResponse(params);
-      }
-    }
+/**
+ * Responds to the root admin path
+ * - Revalidate rule from data store and cache it.
+ */
 
-    logger.info(`No rule found for ${req.url}`);
-    return responseBuffer.toString();
-  }
+export async function handleRootAdmin(req: express.Request, res: express.Response) {
+  res.send('Welcome to SRP Admin');
 }
