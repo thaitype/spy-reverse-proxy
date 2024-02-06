@@ -15,7 +15,7 @@ export class ResponseTransformerPlugin {
   static name = 'response-transformer';
   constructor(protected readonly rule: SpyConfigRuleEntity) {
     logger.info(
-      `Rule: ${rule.ruleName} with: ${rule.upstreamUrl} and ${rule.path} Using plugin: ${rule.plugin} with data: ${rule.data}`
+      `[${rule.plugin}] Rule: ${rule.ruleName} => ${rule.path}, data: ${rule.data}`
     );
   }
 
