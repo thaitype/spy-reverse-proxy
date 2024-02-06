@@ -11,9 +11,11 @@ export class ResponseTransformerPlugin {
   async handleResponse(params: HandleResponseParams) {
     const { responseBuffer } = params;
     if (!isMatchedRule(this.rule, params.req)) return responseBuffer.toString();
-    const result = new ResponseTransformerExpression (params, this.rule.data).validate();
-    if(!result.success) {
-      logger.error(`[${this.rule.plugin}] Rule: ${this.rule.ruleName} => ${this.rule.path}, data: ${this.rule.data}, error: ${result.errorMessages.join(', ')}`);
+    const result = new ResponseTransformerExpression(params, this.rule.data).validateAndExecute({ withExecute: true });
+    if (!result.success) {
+      logger.error(
+        `[${this.rule.plugin}] Rule: ${this.rule.ruleName} => ${this.rule.path}, data: ${this.rule.data}, error: ${result.errorMessages.join(', ')}`
+      );
     }
     return responseBuffer.toString();
   }

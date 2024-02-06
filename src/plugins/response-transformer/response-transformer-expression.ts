@@ -1,5 +1,5 @@
 import type { HandleResponseParams } from '../spy-plugin';
-import { replaceStatusCode } from './action-expressions';
+import { ReplaceStatusCodeActionExpression } from './action-expressions';
 
 export type ExpressionValidateResult =
   | {
@@ -9,6 +9,10 @@ export type ExpressionValidateResult =
       success: false;
       errorMessages: string[];
     };
+
+export interface ValidateAndExecuteOptions {
+  withExecute: boolean;
+}
 
 /**
  * Spec
@@ -37,7 +41,7 @@ export class ResponseTransformerExpression {
     this.actionExpressions = this.expression.split(',');
   }
 
-  validate(): ExpressionValidateResult {
+  validateAndExecute(option: ValidateAndExecuteOptions): ExpressionValidateResult {
     const errorMessages: string[] = [];
     for (const actionExpression of this.actionExpressions) {
       const [action, value] = actionExpression.split('=');
@@ -45,7 +49,7 @@ export class ResponseTransformerExpression {
         errorMessages.push(`Invalid action expression: ${actionExpression}`);
       }
 
-      const result = this.validateActions(action, value);
+      const result = this.validateAndExecuteActions(action, value, option);
       if (!result.success) {
         errorMessages.push(...result.errorMessages);
       }
@@ -62,10 +66,10 @@ export class ResponseTransformerExpression {
     };
   }
 
-  validateActions(action: string, actionParams: string): ExpressionValidateResult {
+  validateAndExecuteActions(action: string, actionParams: string, option: ValidateAndExecuteOptions): ExpressionValidateResult {
     switch (action) {
       case 'replace.status_code':
-        return replaceStatusCode(this.params, actionParams);
+        return new ReplaceStatusCodeActionExpression(this.params, actionParams, option).execute();
       default:
         return {
           success: false,
