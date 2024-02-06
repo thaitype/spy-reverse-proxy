@@ -11,13 +11,13 @@ export const ruleSchema = z.object({
   method: z.string().optional(),
   plugin: z.string(),
   actionExpressions: z.array(actionExpression),
-  enabled: z.boolean(),
-  createdAt: z.string(),
+  condition: z.boolean().optional(),
+});
+
+export const ruleConfigSchema = z.object({
+  rules: z.record(ruleSchema),
+  errorMessages: z.array(z.string()),
 });
 
 export type Rule = z.infer<typeof ruleSchema>;
-
-export interface RuleConfig {
-  rules: Rule[];
-  errorMessages: string[];
-}
+export type RuleConfig = z.infer<typeof ruleConfigSchema>;

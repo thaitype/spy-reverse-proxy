@@ -1,3 +1,4 @@
+import type { Rule } from '../rule.schema';
 import type { HandleResponseParams } from '../spy-rule-plugin';
 import { ReplaceStatusCodeActionExpression } from './action-expressions';
 
@@ -10,10 +11,10 @@ export type ExpressionValidateResult =
       errorMessages: string[];
     };
 
-export interface ValidateAndExecuteOptions {
-  withExecute: boolean;
-  skipActionExpression?: boolean;
-}
+// export interface ValidateAndExecuteOptions {
+//   withExecute: boolean;
+//   skipActionExpression?: boolean;
+// }
 
 /**
  * Spec
@@ -30,53 +31,27 @@ export interface ValidateAndExecuteOptions {
  */
 
 export class ResponseTransformerExpression {
-  public actionExpressions: string[] = [];
   constructor(
     public readonly params: HandleResponseParams,
-    public readonly expression: string
-  ) {
-    this.prepare();
-  }
+    public readonly rule: Rule
+  ) {}
 
-  prepare() {
-    this.actionExpressions = this.expression.split(',');
-    this.actionExpressions = this.actionExpressions.map(actionExpression => actionExpression.trim());
-  }
-
-  validateAndExecute(option: ValidateAndExecuteOptions): ExpressionValidateResult {
-    const errorMessages: string[] = [];
-    for (const actionExpression of this.actionExpressions) {
-      const [action, value] = actionExpression.split('=');
-      if (!action || !value) {
-        errorMessages.push(`Invalid action expression: ${actionExpression}`);
-      }
-
-      if (option.skipActionExpression === true) continue;
-      const result = this.validateAndExecuteActions(action, value, option);
+  execute(): ExpressionValidateResult {
+    for (const { action, param } of this.rule.actionExpressions) {
+      const result = this.executeActions(action, param);
       if (!result.success) {
-        errorMessages.push(...result.errorMessages);
+        return result;
       }
-    }
-
-    if (errorMessages.length > 0) {
-      return {
-        success: false,
-        errorMessages,
-      };
     }
     return {
       success: true,
     };
   }
 
-  validateAndExecuteActions(
-    action: string,
-    actionParams: string,
-    option: ValidateAndExecuteOptions
-  ): ExpressionValidateResult {
+  executeActions(action: string, actionParams: string): ExpressionValidateResult {
     switch (action) {
       case 'replace.status_code':
-        return new ReplaceStatusCodeActionExpression(this.params, actionParams, option).execute();
+        return new ReplaceStatusCodeActionExpression(this.params, actionParams).execute();
       default:
         return {
           success: false,
@@ -84,4 +59,30 @@ export class ResponseTransformerExpression {
         };
     }
   }
+
+  // validateAndExecute(option: ValidateAndExecuteOptions): ExpressionValidateResult {
+  //   const errorMessages: string[] = [];
+  //   for (const actionExpression of this.actionExpressions) {
+  //     const [action, value] = actionExpression.split('=');
+  //     if (!action || !value) {
+  //       errorMessages.push(`Invalid action expression: ${actionExpression}`);
+  //     }
+
+  //     if (option.skipActionExpression === true) continue;
+  //     const result = this.validateAndExecuteActions(action, value, option);
+  //     if (!result.success) {
+  //       errorMessages.push(...result.errorMessages);
+  //     }
+  //   }
+
+  //   if (errorMessages.length > 0) {
+  //     return {
+  //       success: false,
+  //       errorMessages,
+  //     };
+  //   }
+  //   return {
+  //     success: true,
+  //   };
+  // }
 }

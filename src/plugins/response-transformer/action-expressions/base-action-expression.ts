@@ -1,12 +1,11 @@
 import type { HandleResponseParams } from '@/plugins';
-import type { ExpressionValidateResult, ValidateAndExecuteOptions } from '../response-transformer-expression';
+import type { ExpressionValidateResult } from '../response-transformer-expression';
 import { logger } from '@/logger';
 
 export abstract class BaseActionExpression {
   constructor(
     public params: HandleResponseParams,
-    public actionParams: string,
-    public options: ValidateAndExecuteOptions
+    public actionParams: string
   ) {}
   abstract validate(): ExpressionValidateResult;
   abstract executeAction(): void;
@@ -15,14 +14,8 @@ export abstract class BaseActionExpression {
     if (!result.success) {
       return result;
     }
-    if (this.options.withExecute) {
-      this.executeAction();
-      logger.info(`[ResponseTransformer] Action: ${this.constructor.name}, params: ${this.actionParams}, executed`);
-    } else {
-      logger.info(
-        `[ResponseTransformer] Action: ${this.constructor.name}, params: ${this.actionParams}, skipping execute`
-      );
-    }
+    this.executeAction();
+    logger.info(`[ResponseTransformer] Action: ${this.constructor.name}, params: ${this.actionParams}, executed`);
     return {
       success: true,
     };
