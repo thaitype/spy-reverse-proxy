@@ -131,3 +131,6 @@ dist
 
 # Azurite
 .azurite
+
+# Data cache
+.srp

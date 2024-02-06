@@ -3,7 +3,7 @@ import pino from 'pino';
 import pinoHttp from 'pino-http';
 import fs from 'fs';
 
-const logDir = '.log';
+const logDir = '.srp/logs';
 
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
 export const logger = pino({
