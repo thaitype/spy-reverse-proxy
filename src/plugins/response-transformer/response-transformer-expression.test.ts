@@ -52,7 +52,7 @@ describe('Should validate expression only', () => {
     const result = exp.validateAndExecute({ withExecute: false, skipActionExpression: true });
     expect(result).toStrictEqual({
       success: false,
-      errorMessages: ['Invalid action expression: replace.status_code', 'Invalid action expression: replace.body']
+      errorMessages: ['Invalid action expression: replace.status_code', 'Invalid action expression: replace.body'],
     });
   });
 
@@ -61,7 +61,7 @@ describe('Should validate expression only', () => {
     const result = exp.validateAndExecute({ withExecute: false, skipActionExpression: true });
     expect(result).toStrictEqual({
       success: false,
-      errorMessages: ['Invalid action expression: replace.body']
+      errorMessages: ['Invalid action expression: replace.body'],
     });
   });
 
@@ -70,7 +70,7 @@ describe('Should validate expression only', () => {
     const result = exp.validateAndExecute({ withExecute: false, skipActionExpression: true });
     expect(result).toStrictEqual({
       success: false,
-      errorMessages: ['Invalid action expression: replace.body']
+      errorMessages: ['Invalid action expression: replace.body'],
     });
   });
   test('with valid expression and whitespace', () => {
@@ -84,5 +84,4 @@ describe('Should validate expression only', () => {
     const result = exp.validateAndExecute({ withExecute: false, skipActionExpression: true });
     expect(result).toStrictEqual({ success: true });
   });
-
 });

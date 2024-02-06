@@ -19,7 +19,9 @@ export abstract class BaseActionExpression {
       this.executeAction();
       logger.info(`[ResponseTransformer] Action: ${this.constructor.name}, params: ${this.actionParams}, executed`);
     } else {
-      logger.info(`[ResponseTransformer] Action: ${this.constructor.name}, params: ${this.actionParams}, skipping execute`);
+      logger.info(
+        `[ResponseTransformer] Action: ${this.constructor.name}, params: ${this.actionParams}, skipping execute`
+      );
     }
     return {
       success: true,

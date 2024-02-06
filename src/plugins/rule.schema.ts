@@ -1,16 +1,8 @@
 import { z } from 'zod';
 
-export const actionExpressionValue = z.object({
-  type: z.literal('value'),
+export const actionExpression = z.object({
   action: z.string(),
-  value: z.string(),
-});
-
-export const actionExpressionKeyValue = z.object({
-  type: z.literal('keyValue'),
-  action: z.string(),
-  key: z.string(),
-  value: z.string(),
+  param: z.string(),
 });
 
 export const ruleSchema = z.object({
@@ -18,13 +10,14 @@ export const ruleSchema = z.object({
   path: z.string(),
   method: z.string().optional(),
   plugin: z.string(),
-  actionExpressions: z.array(z.union([actionExpressionValue, actionExpressionKeyValue])),
+  actionExpressions: z.array(actionExpression),
   enabled: z.boolean(),
   createdAt: z.string(),
 });
 
-export const ruleConfigSchema = z.object({
-  rules: z.array(ruleSchema),
-});
-
 export type Rule = z.infer<typeof ruleSchema>;
+
+export interface RuleConfig {
+  rules: Rule[];
+  errorMessages: string[];
+}

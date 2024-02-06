@@ -40,7 +40,7 @@ export class ResponseTransformerExpression {
 
   prepare() {
     this.actionExpressions = this.expression.split(',');
-    this.actionExpressions = this.actionExpressions.map((actionExpression) => actionExpression.trim());
+    this.actionExpressions = this.actionExpressions.map(actionExpression => actionExpression.trim());
   }
 
   validateAndExecute(option: ValidateAndExecuteOptions): ExpressionValidateResult {
@@ -51,7 +51,7 @@ export class ResponseTransformerExpression {
         errorMessages.push(`Invalid action expression: ${actionExpression}`);
       }
 
-      if(option.skipActionExpression === true) continue;
+      if (option.skipActionExpression === true) continue;
       const result = this.validateAndExecuteActions(action, value, option);
       if (!result.success) {
         errorMessages.push(...result.errorMessages);
@@ -69,7 +69,11 @@ export class ResponseTransformerExpression {
     };
   }
 
-  validateAndExecuteActions(action: string, actionParams: string, option: ValidateAndExecuteOptions): ExpressionValidateResult {
+  validateAndExecuteActions(
+    action: string,
+    actionParams: string,
+    option: ValidateAndExecuteOptions
+  ): ExpressionValidateResult {
     switch (action) {
       case 'replace.status_code':
         return new ReplaceStatusCodeActionExpression(this.params, actionParams, option).execute();
