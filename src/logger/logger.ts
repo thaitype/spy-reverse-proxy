@@ -4,8 +4,7 @@ import fs from 'fs';
 
 const logDir = '.log';
 
-if(!fs.existsSync(logDir))
-  fs.mkdirSync(logDir, { recursive: true });
+if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
 export const logger = pino({
   level: env.srpLoggerLevel,
   transport: {

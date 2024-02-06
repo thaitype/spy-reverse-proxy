@@ -1,4 +1,4 @@
 import { server } from './server';
-import { extractErorMessage } from './utils';
+import { extractErorMessage } from './utils/utils';
 
 server().catch(extractErorMessage);

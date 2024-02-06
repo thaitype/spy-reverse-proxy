@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { environmentSchema } from '../environment/env.schema';
-import { extractErorMessage } from '../utils';
+import { extractErorMessage } from '@/utils';
 import { zodParser } from '@thaitype/record-parser/zod';
 /**
  * Get environment variables

@@ -32,11 +32,13 @@
       /* using absolute path */
       "baseUrl": "./",
       "paths": {
-        "@/database": ["src/database/index.ts"],
-        "@/entities": ["src/entities/index.ts"],
-        "@/plugins": ["src/plugins/index.ts"],
-        "@/logger": ["src/logger/index.ts"],
-        "@/environment": ["src/environment/index.ts"],
+        "@/*": ["src/*"],
+        // "@/database": ["src/database/index.ts"],
+        // "@/entities": ["src/entities/index.ts"],
+        // "@/plugins": ["src/plugins/index.ts"],
+        // "@/logger": ["src/logger/index.ts"],
+        // "@/environment": ["src/environment/index.ts"],
+        // "@/utils": ["src/utils/index.ts"],
       }
     },
     "include": ["**/*.ts"],

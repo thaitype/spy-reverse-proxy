@@ -407,5 +407,4 @@ describe('Test only path changed ', () => {
       )
     ).toBe(true);
   });
-
 });

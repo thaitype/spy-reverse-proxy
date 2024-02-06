@@ -5,6 +5,7 @@ import invariant from 'tiny-invariant';
 import { TableClient } from '@azure/data-tables';
 import { env } from '@/environment';
 import { ODataExpression } from 'ts-odata-client';
+import { trimStartAndEndSlash } from '@/utils';
 
 export class SpyConfigRuleService {
   private oDataExpresion = ODataExpression.forV4<SpyConfigRuleEntityAzureTable>();
@@ -12,6 +13,7 @@ export class SpyConfigRuleService {
   constructor(public readonly tableClient: AzureTable<SpyConfigRuleEntityAzureTable>) {}
 
   async listAllMatchUpstreamUrlRules(upstreamUrl: string) {
+    const url = trimStartAndEndSlash(upstreamUrl);
     await this.tableClient.createTable();
     return this.tableClient.list(
       this.oDataExpresion
@@ -19,8 +21,8 @@ export class SpyConfigRuleService {
           p.upstreamUrl
             .$equals('')
             .or(p.upstreamUrl.$equals(null))
-            .or(p.upstreamUrl.$equals(upstreamUrl))
-            .or(p.upstreamUrl.$equals(`${upstreamUrl}/`))
+            .or(p.upstreamUrl.$equals(url))
+            .or(p.upstreamUrl.$equals(`${url}/`))
         )
         .build()
     );

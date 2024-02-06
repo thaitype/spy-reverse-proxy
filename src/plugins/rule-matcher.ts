@@ -1,7 +1,6 @@
 import type { SpyConfigRuleEntity } from '@/entities';
 import type { IncomingMessage } from 'node:http';
-
-export const trimStartAndEndSlash = (path?: string) => path?.trim().replace(/^\/+|\/+$/g, '');
+import { trimStartAndEndSlash } from '@/utils';
 
 export function isMatchedRule(rule: Partial<SpyConfigRuleEntity>, req: IncomingMessage) {
   if (rule.condition === undefined) return false;

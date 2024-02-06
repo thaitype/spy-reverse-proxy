@@ -1,25 +1,20 @@
 import type { SpyConfigRuleEntity } from '@/entities';
 import { logger } from '@/logger';
-import type { HandleResponseParams } from '..';
+import { isMatchedRule } from '../rule-matcher';
+import type { HandleResponseParams } from '../spy-plugin';
 
 export class ResponseTransformerPlugin {
   static name = 'response-transformer';
-  constructor(protected readonly rule: SpyConfigRuleEntity) {
-    logger.info(
-      `[${rule.plugin}] Rule: ${rule.ruleName} => ${rule.path}, data: ${rule.data}`
-    );
-  }
+  constructor(protected readonly rule: SpyConfigRuleEntity) {}
 
   async handleResponse(params: HandleResponseParams) {
     const { responseBuffer } = params;
-    const condition = this.rule.condition ?? true;
-    if(!this.rule.data || !condition) return responseBuffer.toString();
+    if (!isMatchedRule(this.rule, params.req)) return responseBuffer.toString();
 
-    logger.info(`Response transformer plugin is running for rule: ${this.rule.ruleName}`);
     // Basic response transformer
     const [action, value] = this.rule.data.split('=');
-    if(action === 'replace.status_code') {
-      logger.info(`Replacing status code to ${value}`);
+    if (action === 'replace.status_code') {
+      logger.info(`[${this.rule.plugin}] Rule: ${this.rule.ruleName} => ${this.rule.path}, data: ${this.rule.data}`);
       params.res.statusCode = parseInt(value);
     }
     return responseBuffer.toString();
