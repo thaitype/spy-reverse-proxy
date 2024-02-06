@@ -7,7 +7,7 @@ export async function server() {
   const app = express();
   const port = env.srpPort;
 
-  await registerSpyPlugin(app);
+   await registerSpyPlugin(app);
 
   // Start the server
   app.listen(port, () => {

@@ -1,27 +1,64 @@
 import { initSampleRule, spyConfigRuleService } from '../database';
 import { env } from '../environment';
-import { httpLogger, logger } from '../logger';
+import { httpLogger, logger, stringLogger } from '../logger';
 import type express from 'express';
 import { spyMiddleware } from './spy-middleware';
 import type { SpyConfigRuleEntityAzureTable } from '@/entities';
 import { SpyRule } from './spy-rule';
 import { cache } from '@/cache';
-import type { RuleConfig} from './rule.schema';
+import type { RuleConfig } from './rule.schema';
 import { ruleConfigSchema } from './rule.schema';
+import { DataViewer } from '@thaitype/data-viewer-server';
 
 export async function initRulePlugin() {
-  await parseSpyConfig(env.srpUpstreamUrl);
   await initSampleRule(spyConfigRuleService);
   logger.info(`Start proxy with upstream url: ${env.srpUpstreamUrl}`);
+  return parseSpyConfig(env.srpUpstreamUrl);
 }
 
-export async function registerSpyPlugin(app: express.Application) {
-  await initRulePlugin();
+export function convertRuleToTable(rule: RuleConfig['rules']): Record<string, unknown>[] {
+  const result: Record<string, unknown>[] = [];
+  for (const value of Object.values(rule)) {
+    result.push(value);
+  }
+  return result;
+}
+
+export function convertErrorMessagesToTable(rules: RuleConfig['errorMessages']): Record<string, unknown>[] {
+  const result: Record<string, unknown>[] = [];
+  for (const rule of rules) {
+    result.push({
+      'Error Message': rule,
+    });
+  }
+  return result;
+}
+
+
+export async function registerSpyPlugin(app: express.Express) {
+  const rules = await initRulePlugin();
+  logger.info('Init data viewer');
+  const dataViewer = new DataViewer({
+    path: env.srpAdminRootPath + '/data-viewer',
+    logger: stringLogger
+  });
+  dataViewer.addHeader('SRP Config');
+  dataViewer.addTable([
+    {
+      'Upstream URL': env.srpUpstreamUrl,
+    },
+  ]);
+  dataViewer.addHeader('Validated Rules');
+  dataViewer.addTable(convertRuleToTable(rules.rules));
+  dataViewer.addHeader('Error Rules');
+  dataViewer.addTable(convertErrorMessagesToTable(rules.errorMessages));
+  dataViewer.registerMiddleware(app);
 
   app.use(httpLogger);
+
   app.get(env.srpAdminRootPath, async (req, res) => {
-    await getSpyConfig({ 
-      forceReset: true
+    await getSpyConfig({
+      forceReset: true,
     });
     res.send('Welcome to SRP Admin');
   });
