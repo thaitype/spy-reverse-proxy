@@ -25,7 +25,7 @@ export interface SpyConfigRuleEntity {
    * 
    * When undefined, the spy server will match all methods
    */
-  method?: string;
+  method?: string | null;
   /**
    * enable or disable the rule
    */
