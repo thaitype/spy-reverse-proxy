@@ -12,6 +12,7 @@ export type ExpressionValidateResult =
 
 export interface ValidateAndExecuteOptions {
   withExecute: boolean;
+  skipActionExpression?: boolean;
 }
 
 /**
@@ -31,14 +32,15 @@ export interface ValidateAndExecuteOptions {
 export class ResponseTransformerExpression {
   public actionExpressions: string[] = [];
   constructor(
-    protected readonly params: HandleResponseParams,
-    protected readonly expression: string
+    public readonly params: HandleResponseParams,
+    public readonly expression: string
   ) {
     this.prepare();
   }
 
   prepare() {
     this.actionExpressions = this.expression.split(',');
+    this.actionExpressions = this.actionExpressions.map((actionExpression) => actionExpression.trim());
   }
 
   validateAndExecute(option: ValidateAndExecuteOptions): ExpressionValidateResult {
@@ -49,6 +51,7 @@ export class ResponseTransformerExpression {
         errorMessages.push(`Invalid action expression: ${actionExpression}`);
       }
 
+      if(option.skipActionExpression === true) continue;
       const result = this.validateAndExecuteActions(action, value, option);
       if (!result.success) {
         errorMessages.push(...result.errorMessages);
