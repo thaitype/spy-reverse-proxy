@@ -11,10 +11,14 @@ export type ExpressionValidateResult =
       errorMessages: string[];
     };
 
-// export interface ValidateAndExecuteOptions {
-//   withExecute: boolean;
-//   skipActionExpression?: boolean;
-// }
+export interface ExpressionOptions {
+  /**
+   * If true, the expression will not execute the action, only validate the expression
+   *
+   * @default false
+   */
+  validateOnly: boolean;
+}
 
 /**
  * Spec
@@ -32,13 +36,14 @@ export type ExpressionValidateResult =
 
 export class ResponseTransformerExpression {
   constructor(
-    public readonly params: HandleResponseParams,
-    public readonly rule: Rule
+    public readonly rule: Rule,
+    public readonly params?: HandleResponseParams
   ) {}
 
   execute(): ExpressionValidateResult {
+    const validateOnly = this.params ? false : true;
     for (const { action, param } of this.rule.actionExpressions) {
-      const result = this.executeActions(action, param);
+      const result = this.executeActions(action, param, { validateOnly });
       if (!result.success) {
         return result;
       }
@@ -48,10 +53,10 @@ export class ResponseTransformerExpression {
     };
   }
 
-  executeActions(action: string, actionParams: string): ExpressionValidateResult {
+  executeActions(action: string, actionParams: string, options: ExpressionOptions): ExpressionValidateResult {
     switch (action) {
       case 'replace.status_code':
-        return new ReplaceStatusCodeActionExpression(this.params, actionParams).execute();
+        return new ReplaceStatusCodeActionExpression(actionParams, this.params, options).execute();
       default:
         return {
           success: false,

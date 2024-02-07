@@ -10,7 +10,7 @@ export class ResponseTransformerPlugin {
   async handleResponse(params: HandleResponseParams) {
     const { responseBuffer } = params;
 
-    const result = new ResponseTransformerExpression(params, this.rule).execute();
+    const result = new ResponseTransformerExpression(this.rule, params).execute();
     if (!result.success) {
       logger.error(
         `[${this.rule.plugin}] Rule: ${this.rule.ruleName} => ${this.rule.path}, error: ${result.errorMessages.join(', ')}`

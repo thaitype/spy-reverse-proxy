@@ -16,6 +16,10 @@ export class ReplaceStatusCodeActionExpression extends BaseActionExpression {
   }
 
   executeAction() {
+    if (!this.params)
+      throw new Error(
+        'HandleResponseParams is not defined, this is happen when `dryRun` is true only, but this is not the case here.'
+      );
     const statusCode = parseInt(this.actionParams);
     this.params.res.statusCode = statusCode;
   }

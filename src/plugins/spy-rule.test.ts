@@ -8,10 +8,10 @@ const sharedRule = {
   upstreamUrl: 'http://upstream.url',
 };
 
-describe('SpyRule', () => {
+describe('parseData', () => {
   test('test empty rule', () => {
     const spyRule = new SpyRule([]);
-    expect(spyRule.parse()).toStrictEqual({
+    expect(spyRule.parseData()).toStrictEqual({
       rules: {},
       errorMessages: [],
     });
@@ -25,7 +25,7 @@ describe('SpyRule', () => {
         data: 'status_code=400',
       },
     ]);
-    expect(spyRule.parse()).toStrictEqual({
+    expect(spyRule.parseData()).toStrictEqual({
       rules: {
         'plugin:foo': {
           ruleName: 'ruleName',
@@ -48,17 +48,8 @@ describe('SpyRule', () => {
         data: '',
       },
     ]);
-    expect(spyRule.parse()).toStrictEqual({
-      rules: {
-        'plugin:foo': {
-          ruleName: 'ruleName',
-          path: '/foo',
-          plugin: 'plugin',
-          condition: undefined,
-          method: undefined,
-          actionExpressions: [],
-        },
-      },
+    expect(spyRule.parseData()).toStrictEqual({
+      rules: {},
       errorMessages: ['Action name is missing in the expression: ""'],
     } satisfies RuleConfig);
   });
@@ -71,17 +62,8 @@ describe('SpyRule', () => {
         data: '=400',
       },
     ]);
-    expect(spyRule.parse()).toStrictEqual({
-      rules: {
-        'plugin:foo': {
-          ruleName: 'ruleName',
-          path: '/foo',
-          plugin: 'plugin',
-          condition: undefined,
-          method: undefined,
-          actionExpressions: [],
-        },
-      },
+    expect(spyRule.parseData()).toStrictEqual({
+      rules: {},
       errorMessages: ['Action name is missing in the expression: "=400"'],
     } satisfies RuleConfig);
   });
@@ -94,7 +76,21 @@ describe('SpyRule', () => {
         data: 'status_code=',
       },
     ]);
-    expect(spyRule.parse()).toStrictEqual({
+    expect(spyRule.parseData()).toStrictEqual({
+      rules: {},
+      errorMessages: ['Param is missing in the expression: "status_code="'],
+    } satisfies RuleConfig);
+  });
+
+  test('when data has whitespace', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'status_code = 400',
+      },
+    ]);
+    expect(spyRule.parseData()).toStrictEqual({
       rules: {
         'plugin:foo': {
           ruleName: 'ruleName',
@@ -102,12 +98,178 @@ describe('SpyRule', () => {
           plugin: 'plugin',
           condition: undefined,
           method: undefined,
-          actionExpressions: [],
+          actionExpressions: [{ action: 'status_code', param: '400' }],
         },
       },
-      errorMessages: ['Param is missing in the expression: "status_code="'],
+      errorMessages: [],
     } satisfies RuleConfig);
   });
+
+  test('when data has multiple actions', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'status_code=400,replace.status_code=400',
+      },
+    ]);
+    expect(spyRule.parseData()).toStrictEqual({
+      rules: {
+        'plugin:foo': {
+          ruleName: 'ruleName',
+          path: '/foo',
+          plugin: 'plugin',
+          condition: undefined,
+          method: undefined,
+          actionExpressions: [
+            { action: 'status_code', param: '400' },
+            { action: 'replace.status_code', param: '400' },
+          ],
+        },
+      },
+      errorMessages: [],
+    } satisfies RuleConfig);
+  });
+
+  test('when data has multiple actions with whitespace', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'status_code = 400, replace.status_code = 400',
+      },
+    ]);
+    expect(spyRule.parseData()).toStrictEqual({
+      rules: {
+        'plugin:foo': {
+          ruleName: 'ruleName',
+          path: '/foo',
+          plugin: 'plugin',
+          condition: undefined,
+          method: undefined,
+          actionExpressions: [
+            { action: 'status_code', param: '400' },
+            { action: 'replace.status_code', param: '400' },
+          ],
+        },
+      },
+      errorMessages: [],
+    } satisfies RuleConfig);
+  });
+
+  test('when data has multiple actions with whitespace and empty action', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'status_code = 400, replace.status_code = 400, =400',
+      },
+    ]);
+    expect(spyRule.parseData()).toStrictEqual({
+      rules: {},
+      errorMessages: ['Action name is missing in the expression: "=400"'],
+    } satisfies RuleConfig);
+  });
+
+  test('when data has multiple actions with whitespace and empty param', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'status_code = 400, replace.status_code = 400, status_code =',
+      },
+    ]);
+    expect(spyRule.parseData()).toStrictEqual({
+      rules: {},
+      errorMessages: ['Param is missing in the expression: "status_code ="'],
+    } satisfies RuleConfig);
+  });
+
+  test('when data has multiple actions with whitespace and empty action expression', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'status_code = 400, replace.status_code = 400, ',
+      },
+    ]);
+    expect(spyRule.parseData()).toStrictEqual({
+      rules: {},
+      errorMessages: ['Action name is missing in the expression: ""'],
+    } satisfies RuleConfig);
+  });
+});
+
+describe('parse (parseData + parsePlugin)', () => {
+  test('when plugin is not response-transformer', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'status_code=400',
+      },
+    ]);
+    expect(spyRule.parse()).toStrictEqual({
+      rules: {},
+      errorMessages: ['Invalid plugin: plugin'],
+    });
+  });
+
+  test('when plugin is response-transformer', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'replace.status_code=400',
+        plugin: 'response-transformer',
+      },
+    ]);
+    expect(spyRule.parse()).toStrictEqual({
+      rules: {
+        'response-transformer:foo': {
+          ruleName: 'ruleName',
+          path: '/foo',
+          plugin: 'response-transformer',
+          condition: undefined,
+          method: undefined,
+          actionExpressions: [{ action: 'replace.status_code', param: '400' }],
+        },
+      },
+      errorMessages: [],
+    });
+  });
+
+  test('when plugin is response-transformer, and action is not allowed', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'status_code=400',
+        plugin: 'response-transformer',
+      },
+    ]);
+    expect(spyRule.parse()).toStrictEqual({
+      rules: {},
+      errorMessages: ['Unsupport action: status_code'],
+    });
+  });
+
+  test('when plugin is response-transformer, and action params is invalid', () => {
+    const spyRule = new SpyRule([
+      {
+        ...sharedRule,
+        path: '/foo',
+        data: 'replace.status_code=',
+        plugin: 'response-transformer',
+      },
+    ]);
+    expect(spyRule.parse()).toStrictEqual({
+      rules: {},
+      errorMessages: ['Param is missing in the expression: "replace.status_code="'],
+    });
+  });
+
+
 });
 
 describe('Make sure rule ID can group rule', () => {

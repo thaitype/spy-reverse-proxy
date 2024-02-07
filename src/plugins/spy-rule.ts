@@ -1,7 +1,13 @@
 import type { SpyConfigRuleEntity } from '@/entities';
 import type { Rule, RuleConfig } from './rule.schema';
 import { trimStartAndEndSlash } from '@/utils';
+import { ResponseTransformerPlugin } from '.';
+import { ResponseTransformerExpression } from './response-transformer/response-transformer-expression';
 
+/**
+ * TODO: Hard coded allowed plugins
+ */
+export const allowedPlugins = [ResponseTransformerPlugin.name];
 /**
  * Spec
  * 
@@ -24,6 +30,11 @@ export class SpyRule {
   constructor(public readonly spyConfigRules: SpyConfigRuleEntity[]) {}
 
   parse(): RuleConfig {
+    const ruleConfig = this.parseData();
+    return this.parsePlugin(ruleConfig);
+  }
+
+  parseData(): RuleConfig {
     for (const spyConfigRule of this.spyConfigRules) {
       const ruleId = this.generateRuleId(spyConfigRule);
       if (this.rules[ruleId]) {
@@ -32,20 +43,44 @@ export class SpyRule {
       }
       const { actionExpressions, errorMessages } = this.parseActionExpressions(spyConfigRule.data);
       this.errorMessages.push(...errorMessages);
-      this.rules[ruleId] = {
-        ruleName: spyConfigRule.ruleName,
-        path: spyConfigRule.path,
-        method: spyConfigRule.method ?? undefined,
-        plugin: spyConfigRule.plugin,
-        actionExpressions,
-        condition: spyConfigRule.condition,
-      };
+      if (errorMessages.length === 0) {
+        this.rules[ruleId] = {
+          ruleName: spyConfigRule.ruleName,
+          path: spyConfigRule.path,
+          method: spyConfigRule.method ?? undefined,
+          plugin: spyConfigRule.plugin,
+          actionExpressions,
+          condition: spyConfigRule.condition,
+        };
+      }
     }
 
     return {
       rules: this.rules,
       errorMessages: this.errorMessages,
     };
+  }
+
+  /**
+   * TODO: Duplicate code from `SpyRulePlugin`
+   */
+
+  parsePlugin(ruleConfig: RuleConfig): RuleConfig {
+    for (const [ruleId, rule] of Object.entries(ruleConfig.rules)) {
+      if (!allowedPlugins.includes(rule.plugin ?? '')) {
+        this.errorMessages.push(`Invalid plugin: ${rule.plugin}`);
+        delete ruleConfig.rules[ruleId as keyof typeof ruleConfig.rules];
+        continue;
+      }
+      if (rule.plugin === ResponseTransformerPlugin.name) {
+        const result = new ResponseTransformerExpression(rule).execute();
+        if (!result.success) {
+          delete ruleConfig.rules[ruleId as keyof typeof ruleConfig.rules];
+          this.errorMessages.push(...result.errorMessages);
+        }
+      }
+    }
+    return ruleConfig;
   }
 
   parseActionExpressions(data: string): {
