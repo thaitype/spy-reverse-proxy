@@ -58,6 +58,8 @@ export class SpyRule {
     const rawExpressions = data.split(',').map(actionExpression => actionExpression.trim());
     for (const rawExpression of rawExpressions) {
       const [action, param] = rawExpression.split('=');
+
+
       actionExpressions.push({
         action: action.trim(),
         param: param.trim(),
