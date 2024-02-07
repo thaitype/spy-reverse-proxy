@@ -9,8 +9,8 @@ dependencies:
     specifier: ^13.2.2
     version: 13.2.2
   '@thaitype/data-viewer-server':
-    specifier: 0.3.0-canary.7
-    version: 0.3.0-canary.7
+    specifier: ^1.0.0
+    version: 1.0.0
   '@thaitype/record-parser':
     specifier: ^1.0.0
     version: 1.0.0
@@ -881,8 +881,8 @@ packages:
     resolution: {integrity: sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==}
     dev: false
 
-  /@thaitype/data-viewer-server@0.3.0-canary.7:
-    resolution: {integrity: sha512-Tu+699wijZ1Nc9SXwHmoHVSnTzeM/oAApey9zkDMBsNoYILIxYMEehKmZpT3/sSecBtkiam0snKRmMHn1PWlAQ==}
+  /@thaitype/data-viewer-server@1.0.0:
+    resolution: {integrity: sha512-gCuEU7I678lK5OmKHgaY9rRrV4T5Ar2AVK7QZh7WBmMFDP/kCJi5/wfi/Um2L3Jdckvj7oAvITbgAsMDcMFMuQ==}
     dependencies:
       dayjs: 1.11.10
       ejs: 3.1.9

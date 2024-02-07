@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@azure/data-tables": "^13.2.2",
-    "@thaitype/data-viewer-server": "0.3.0-canary.7",
+    "@thaitype/data-viewer-server": "^1.0.0",
     "@thaitype/record-parser": "^1.0.0",
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
