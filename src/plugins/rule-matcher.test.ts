@@ -164,23 +164,6 @@ describe('Test only method is empty, should match all methods', () => {
     ).toBe(true);
   });
 
-  test('method=null, Giving match path, match all methods (GET)', () => {
-    expect(
-      isMatchedRule(
-        {
-          ...sharedRule,
-          method: null,
-          path: '/path',
-          condition: true,
-        },
-        httpMocks.createRequest({
-          method: 'GET',
-          url: '/path',
-        })
-      )
-    ).toBe(true);
-  });
-
   test('method="" (empty string), Giving match path, match all methods (GET)', () => {
     expect(
       isMatchedRule(

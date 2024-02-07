@@ -2,7 +2,7 @@ import type { IncomingMessage } from 'node:http';
 import { trimStartAndEndSlash } from '@/utils';
 
 export function isMatchedRule(rule: {
-  path: string;
+  path?: string;
   method?: string;
   condition?: boolean;
 }, req: IncomingMessage) {
