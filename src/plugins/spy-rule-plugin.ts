@@ -20,9 +20,9 @@ export class SpyRulePlugin {
     res.setHeader('Powered-by', 'thaitype/spy-reverse-proxy');
 
     const rule = await getSpyConfig();
-    for(const value of Object.values(rule.rules)) {
-      if(isMatchedRule(value, req)) {
-        if(value.plugin === ResponseTransformerPlugin.name) {
+    for (const value of Object.values(rule.rules)) {
+      if (isMatchedRule(value, req)) {
+        if (value.plugin === ResponseTransformerPlugin.name) {
           const plugin = new ResponseTransformerPlugin(value);
           return plugin.handleResponse(params);
         }

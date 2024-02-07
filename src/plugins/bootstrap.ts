@@ -100,7 +100,7 @@ export async function parseSpyConfig(upstreamUrl: string): Promise<RuleConfig> {
     logger.error('Error parsing spyConfig', e);
     let errorMessage = '';
     if (e instanceof Error) {
-      errorMessage = e.message + "\n" + e.stack;
+      errorMessage = e.message + '\n' + e.stack;
     } else {
       errorMessage = `Unknown error, ${String(e)}`;
     }
