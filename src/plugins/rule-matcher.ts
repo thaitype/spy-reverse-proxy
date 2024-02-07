@@ -11,8 +11,8 @@ export function isMatchedRule(
 ) {
   if (rule.condition === undefined) return false;
   if (rule.path === undefined || rule.path === null || rule.path.trim() === '') return false;
-  const rulePath = trimStartAndEndSlash(rule.path.trim());
-  const reqPath = trimStartAndEndSlash(req.url?.trim());
+  const rulePath = trimStartAndEndSlash(rule.path.trim())?.toLowerCase();
+  const reqPath = trimStartAndEndSlash(req.url?.trim())?.toLowerCase();
   if (
     rule.method === undefined ||
     rule.method === null ||

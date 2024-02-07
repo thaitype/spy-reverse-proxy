@@ -390,4 +390,19 @@ describe('Test only path changed ', () => {
       )
     ).toBe(true);
   });
+
+  test('path=/Path (case in-sensitive), Giving not match path', () => {
+    expect(
+      isMatchedRule(
+        {
+          ...sharedRule,
+          path: '/Path',
+          condition: true,
+        },
+        httpMocks.createRequest({
+          url: '/path',
+        })
+      )
+    ).toBe(true);
+  });
 });
