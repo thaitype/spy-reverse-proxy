@@ -29,16 +29,7 @@ export class SpyRulePlugin {
       }
     }
 
-    // const rules = await spyConfigRuleService.listAllMatchUpstreamUrlRules(this.upstreamUrl);
-    // // TODO: Fix later, this might be slow if there are many rules
-    // for await (const rule of rules) {
-    //   if (rule.plugin === ResponseTransformerPlugin.name) {
-    //     const plugin = new ResponseTransformerPlugin(rule);
-    //     return plugin.handleResponse(params);
-    //   }
-    // }
-
-    logger.info(`No rule found for ${req.url}`);
+    logger.debug(`No rule found for ${req.url}`);
     return responseBuffer.toString();
   }
 }

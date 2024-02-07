@@ -8,7 +8,7 @@ import { SpyRule } from './spy-rule';
 import { cache } from '@/cache';
 import type { RuleConfig } from './rule.schema';
 import { ruleConfigSchema } from './rule.schema';
-import { DataViewer } from '@thaitype/data-viewer-server';
+import { DataViewer, DataContainer } from '@thaitype/data-viewer-server';
 
 export async function initRulePlugin() {
   await initSampleRule(spyConfigRuleService);
@@ -34,34 +34,44 @@ export function convertErrorMessagesToTable(rules: RuleConfig['errorMessages']):
   return result;
 }
 
-
-export async function registerSpyPlugin(app: express.Express) {
-  const rules = await initRulePlugin();
-  logger.info('Init data viewer');
-  const dataViewer = new DataViewer({
-    path: env.srpAdminRootPath + '/data-viewer',
-    logger: stringLogger
-  });
-  dataViewer.addHeader('SRP Config');
-  dataViewer.addTable([
+export function defineRuleReport(rules: RuleConfig): DataContainer {
+  const container = new DataContainer();
+  container.addHeader('SRP Config');
+  container.addTable([
     {
       'Upstream URL': env.srpUpstreamUrl,
     },
   ]);
-  dataViewer.addHeader('Validated Rules');
-  dataViewer.addTable(convertRuleToTable(rules.rules));
-  dataViewer.addHeader('Error Rules');
-  dataViewer.addTable(convertErrorMessagesToTable(rules.errorMessages));
+  container.addHeader('Validated Rules');
+  container.addTable(convertRuleToTable(rules.rules));
+  container.addHeader('Error Rules');
+  container.addTable(convertErrorMessagesToTable(rules.errorMessages));
+  return container;
+}
+
+export async function registerSpyPlugin(app: express.Express) {
+  await initRulePlugin();
+  const dataViewer = new DataViewer({
+    path: env.srpAdminRootPath,
+    logger: stringLogger,
+  });
+
+  /**
+   * Add middleware to admin path, to revalidate rule from data store and cache it.
+   */
+  app.use(env.srpAdminRootPath, async (req, res, next) => {
+    const result = await getSpyConfig({
+      forceReset: true,
+    });
+    // Set dataViewer to show the new rule
+    dataViewer.set(defineRuleReport(result));
+    logger.info('Revalidate spyConfig');
+    next();
+  });
   dataViewer.registerMiddleware(app);
 
   app.use(httpLogger);
 
-  app.get(env.srpAdminRootPath, async (req, res) => {
-    await getSpyConfig({
-      forceReset: true,
-    });
-    res.send('Welcome to SRP Admin');
-  });
   app.use(spyMiddleware);
 }
 
@@ -83,11 +93,11 @@ export async function parseSpyConfig(upstreamUrl: string): Promise<RuleConfig> {
 
 export async function getSpyConfig(option?: { forceReset?: boolean }): Promise<RuleConfig> {
   if (option?.forceReset) {
-    logger.info('Force reset spyConfig');
+    logger.debug('Force reset spyConfig');
     cache.delete('spyConfig');
   }
   if (cache.get('spyConfig') === undefined) {
-    logger.info('spyConfig not found in cache, set spy config in cache');
+    logger.debug('spyConfig not found in cache, set spy config in cache');
     const ruleConfig = await parseSpyConfig(env.srpUpstreamUrl);
     cache.set('spyConfig', JSON.stringify(ruleConfig));
     return ruleConfig;
