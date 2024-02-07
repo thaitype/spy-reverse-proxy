@@ -19,7 +19,13 @@ export async function initRulePlugin() {
 export function convertRuleToTable(rule: RuleConfig['rules']): Record<string, unknown>[] {
   const result: Record<string, unknown>[] = [];
   for (const value of Object.values(rule)) {
-    result.push(value);
+    const { actionExpressions, ...rest } = value;
+    const row: Record<string, unknown> = rest;
+    let i = 0;
+    for (const actionExpression of actionExpressions) {
+      row[`actionExpressions[${i++}]`] = `${actionExpression.action} = ${actionExpression.param}`;
+    }
+    result.push(row);
   }
   return result;
 }
@@ -88,7 +94,21 @@ export async function parseSpyConfig(upstreamUrl: string): Promise<RuleConfig> {
     rules.push(rawRule);
   }
 
-  return new SpyRule(rules).parse();
+  try {
+    return new SpyRule(rules).parse();
+  } catch (e) {
+    logger.error('Error parsing spyConfig', e);
+    let errorMessage = '';
+    if (e instanceof Error) {
+      errorMessage = e.message + "\n" + e.stack;
+    } else {
+      errorMessage = `Unknown error, ${String(e)}`;
+    }
+    return {
+      rules: {},
+      errorMessages: [`Error parsing spyConfig: ${errorMessage}`, ...rules.map(rule => JSON.stringify(rule))],
+    };
+  }
 }
 
 export async function getSpyConfig(option?: { forceReset?: boolean }): Promise<RuleConfig> {
