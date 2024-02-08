@@ -36,12 +36,11 @@ ENV NPM_VERSION 10.2.5-r0
 # Make sure `"type": "module"` is set in package.json
 COPY --from=build /app/package.json /app/package.json
 # Production dependencies
-# COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/node_modules /app/node_modules
 # Application
 COPY --from=build /app/dist /app
 
-# COPY --from=prod-deps /app/node_modules /app/node_modules
-# COPY --from=build /app/dist /app
+WORKDIR /app
 
 RUN apk add --update --no-cache nodejs=$NODE_VERSION
 
@@ -67,13 +66,10 @@ RUN apk add --update --no-cache nodejs=$NODE_VERSION
 
 EXPOSE ${PORT}
 
-# Create a group and user
-RUN addgroup -g 1000 node \
-    && adduser -u 1000 -G node -s /bin/sh -D node
-
+# Create tmp directory and set permissions
 RUN mkdir -p .srp
 RUN chown node .srp
 
 USER node
 
-CMD [ "node", "app/main.cjs" ]
+CMD [ "node", "main.js" ]

@@ -1,45 +1,45 @@
 {
-    "compilerOptions": {
-      /* Base Options: */
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "target": "es2022",
-      "allowJs": true,
-      "resolveJsonModule": true,
-      "moduleDetection": "force",
-      "isolatedModules": true,
-      /* Strictness */
-      "strict": true,
-      "noUncheckedIndexedAccess": true,
-    //   /* If transpiling with TypeScript: */
-      // "moduleResolution": "NodeNext",
-      // "module": "NodeNext",
-      // "outDir": "dist",
-    //   "sourceMap": true,
-    //   /* AND if you're building for a library: */
-    //   "declaration": true,
-    //   /* AND if you're building for a library in a monorepo: */
-    //   "composite": true,
-    //   "declarationMap": true,
-      /* If NOT transpiling with TypeScript: */
-      "moduleResolution": "Bundler",
-      "module": "ESNext",
-      "noEmit": true,
-    //   /* If your code runs in the DOM: */
-      "lib": ["es2022", "dom", "dom.iterable"],
-      /* If your code doesn't run in the DOM: */
-      // "lib": ["es2022"]
+  "compilerOptions": {
+    /* Base Options: */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+  //   /* If transpiling with TypeScript: */
+    // "moduleResolution": "Node16",
+    "module": "CommonJS",
+    "outDir": "dist",
+  //   "sourceMap": true,
+  //   /* AND if you're building for a library: */
+  //   "declaration": true,
+  //   /* AND if you're building for a library in a monorepo: */
+  //   "composite": true,
+  //   "declarationMap": true,
+    /* If NOT transpiling with TypeScript: */
+    // "moduleResolution": "Bundler",
+    // "module": "ESNext",
+    // "noEmit": true,
+  //   /* If your code runs in the DOM: */
+    "lib": ["es2022", "dom", "dom.iterable"],
+    /* If your code doesn't run in the DOM: */
+    // "lib": ["es2022"]
       /* using absolute path */
-      "baseUrl": "./",
-      "paths": {
-        "@/*": ["src/*"],
-        // "@/database": ["src/database/index.ts"],
-        // "@/entities": ["src/entities/index.ts"],
-        // "@/plugins": ["src/plugins/index.ts"],
-        // "@/logger": ["src/logger/index.ts"],
-        // "@/environment": ["src/environment/index.ts"],
-        // "@/utils": ["src/utils/index.ts"],
-      }
-    },
-    "include": ["**/*.ts"],
-  }
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      // "@/database": ["src/database/index.ts"],
+      // "@/entities": ["src/entities/index.ts"],
+      // "@/plugins": ["src/plugins/index.ts"],
+      // "@/logger": ["src/logger/index.ts"],
+      // "@/environment": ["src/environment/index.ts"],
+      // "@/utils": ["src/utils/index.ts"],
+    }
+  },
+  "include": ["**/*.ts", "vitest.config.mts"],
+}
