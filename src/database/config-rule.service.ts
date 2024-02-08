@@ -77,7 +77,7 @@ export async function initSampleRule(service: SpyConfigRuleService) {
   logger.info('Sample rule initialized');
 }
 
-export function getSpyConfigRuleInstance() {
+export function getSpyConfigRuleInstance(): SpyConfigRuleService {
   invariant(env.srpDataAzureTableConnectionString, 'Azure table connection string is required');
   const tableClient = TableClient.fromConnectionString(
     env.srpDataAzureTableConnectionString,
@@ -86,6 +86,7 @@ export function getSpyConfigRuleInstance() {
   const azureTable = new AzureTable<SpyConfigRuleEntityAzureTable>(tableClient);
   return new SpyConfigRuleService(azureTable);
 }
+
 /**
  * The spy config rule service
  * Singleton instance

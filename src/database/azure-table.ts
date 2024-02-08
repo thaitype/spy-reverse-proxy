@@ -63,7 +63,10 @@ export class AzureTable<TEntity extends AzureTableEntityBase> {
         if (!acc[cur.partitionKey]) {
           acc[cur.partitionKey] = [];
         }
-        acc[cur.partitionKey].push(cur);
+        if(cur.partitionKey === undefined){
+          return acc;
+        }
+        acc[cur.partitionKey]?.push(cur);
         return acc;
       },
       {} as Record<string, TEntity[]>

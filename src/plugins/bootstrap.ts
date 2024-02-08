@@ -11,6 +11,7 @@ import { ruleConfigSchema } from './rule.schema';
 import { DataViewer, DataContainer } from '@thaitype/data-viewer-server';
 
 export async function initRulePlugin() {
+  logger.info('Connecting to Azure Table');
   await initSampleRule(spyConfigRuleService);
   logger.info(`Start proxy with upstream url: ${env.srpUpstreamUrl}`);
   return parseSpyConfig(env.srpUpstreamUrl);
