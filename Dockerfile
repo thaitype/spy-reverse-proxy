@@ -71,6 +71,9 @@ EXPOSE ${PORT}
 RUN addgroup -g 1000 node \
     && adduser -u 1000 -G node -s /bin/sh -D node
 
+RUN mkdir -p .srp
+RUN chown node .srp
+
 USER node
 
 CMD [ "node", "app/main.cjs" ]
