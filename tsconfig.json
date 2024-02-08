@@ -10,7 +10,7 @@
       "isolatedModules": true,
       /* Strictness */
       "strict": true,
-      // "noUncheckedIndexedAccess": true,
+      "noUncheckedIndexedAccess": true,
     //   /* If transpiling with TypeScript: */
       // "moduleResolution": "NodeNext",
       // "module": "NodeNext",
@@ -29,6 +29,17 @@
       "lib": ["es2022", "dom", "dom.iterable"],
       /* If your code doesn't run in the DOM: */
       // "lib": ["es2022"]
+      /* using absolute path */
+      "baseUrl": "./",
+      "paths": {
+        "@/*": ["src/*"],
+        // "@/database": ["src/database/index.ts"],
+        // "@/entities": ["src/entities/index.ts"],
+        // "@/plugins": ["src/plugins/index.ts"],
+        // "@/logger": ["src/logger/index.ts"],
+        // "@/environment": ["src/environment/index.ts"],
+        // "@/utils": ["src/utils/index.ts"],
+      }
     },
     "include": ["**/*.ts"],
   }
