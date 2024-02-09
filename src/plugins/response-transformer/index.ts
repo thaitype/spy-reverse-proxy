@@ -1,1 +1,1 @@
-export * from './response-transformer';
+export * from './response-transformer.js';

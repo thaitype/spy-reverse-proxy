@@ -1,8 +1,9 @@
-import { logger } from '@/logger';
+import { logger } from '@/logger/logger.js';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { ResponseTransformerPlugin } from './response-transformer';
-import { getSpyConfig } from './bootstrap';
-import { isMatchedRule } from './rule-matcher';
+import { ResponseTransformerPlugin } from './response-transformer/response-transformer.js';
+import { getSpyConfig } from './bootstrap.js';
+import { isMatchedRule } from './rule-matcher.js';
+import type { RuleConfig } from './rule.schema.js';
 
 export interface HandleResponseParams {
   responseBuffer: Buffer;
@@ -20,7 +21,7 @@ export class SpyRulePlugin {
     res.setHeader('Powered-by', 'thaitype/spy-reverse-proxy');
 
     const rule = await getSpyConfig();
-    for (const value of Object.values(rule.rules)) {
+    for (const value of Object.values<RuleConfig['rules'][number]>(rule.rules)) {
       if (isMatchedRule(value, req)) {
         if (value.plugin === ResponseTransformerPlugin.name) {
           const plugin = new ResponseTransformerPlugin(value);

@@ -13,13 +13,16 @@
       "default": "./dist/main.cjs"
     }
   },
+  "imports": {
+    "@/*": "./src/*"
+  },
   "scripts": {
     "start": "tsx src/main.ts",
     "dev": "tsx watch src/main.ts",
     "test:coverage": "vitest run --coverage",
     "test": "vitest",
     "test:ci": "vitest run",
-    "build": "esbuild src/main.ts --bundle --platform=node --target=node16 --format=cjs --outfile=dist/main.cjs --minify",
+    "build": "tsc",
     "format": "prettier -w src",
     "lint": "tsc --noEmit && eslint ./src && prettier -c src",
     "lint:fix": "eslint --fix ./src && prettier -w src",

@@ -1,1 +1,1 @@
-export * from './replace-status-code';
+export * from './replace-status-code.js';

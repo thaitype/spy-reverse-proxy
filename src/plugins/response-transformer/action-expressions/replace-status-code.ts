@@ -1,5 +1,5 @@
-import type { ExpressionValidateResult } from '../response-transformer-expression';
-import { BaseActionExpression } from './base-action-expression';
+import type { ExpressionValidateResult } from '../response-transformer-expression.js';
+import { BaseActionExpression } from './base-action-expression.js';
 
 export class ReplaceStatusCodeActionExpression extends BaseActionExpression {
   validate(): ExpressionValidateResult {

@@ -1,4 +1,4 @@
-import type { AzureTableEntityBase } from '../database/azure-table';
+import type { AzureTableEntityBase } from '../database/azure-table.js';
 
 export interface SpyConfigRuleEntity {
   /**

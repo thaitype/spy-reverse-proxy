@@ -1,6 +1,6 @@
-import type { HandleResponseParams } from '@/plugins';
-import type { ExpressionOptions, ExpressionValidateResult } from '../response-transformer-expression';
-import { logger } from '@/logger';
+import type { HandleResponseParams } from '@/plugins/index.js';
+import type { ExpressionOptions, ExpressionValidateResult } from '../response-transformer-expression.js';
+import { logger } from '@/logger/index.js';
 
 export abstract class BaseActionExpression {
   constructor(

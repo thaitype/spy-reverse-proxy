@@ -1,8 +1,8 @@
-import type { SpyConfigRuleEntity } from '@/entities';
-import type { Rule, RuleConfig } from './rule.schema';
-import { trimStartAndEndSlash } from '@/utils';
-import { ResponseTransformerPlugin } from '.';
-import { ResponseTransformerExpression } from './response-transformer/response-transformer-expression';
+import type { SpyConfigRuleEntity } from '@/entities/spy-config-rule.entity.js';
+import type { Rule, RuleConfig } from './rule.schema.js';
+import { trimStartAndEndSlash } from '@/utils/index.js';
+import { ResponseTransformerExpression } from './response-transformer/response-transformer-expression.js';
+import { ResponseTransformerPlugin } from './response-transformer/response-transformer.js';
 
 /**
  * TODO: Hard coded allowed plugins

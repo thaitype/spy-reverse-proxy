@@ -1,11 +1,11 @@
-import { logger } from '@/logger';
-import type { SpyConfigRuleEntityAzureTable } from '../entities/spy-config-rule.entity';
-import { AzureTable } from './azure-table';
+import { logger } from '@/logger/index.js';
+import type { SpyConfigRuleEntityAzureTable } from '../entities/spy-config-rule.entity.js';
+import { AzureTable } from './azure-table.js';
 import invariant from 'tiny-invariant';
 import { TableClient } from '@azure/data-tables';
-import { env } from '@/environment';
+import { env } from '@/environment/index.js';
 import { ODataExpression } from 'ts-odata-client';
-import { trimStartAndEndSlash } from '@/utils';
+import { trimStartAndEndSlash } from '@/utils/index.js';
 
 export class SpyConfigRuleService {
   private oDataExpresion = ODataExpression.forV4<SpyConfigRuleEntityAzureTable>();

@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { SpyRule } from './spy-rule';
-import { RuleConfig } from './rule.schema';
+import { SpyRule } from './spy-rule.js';
+import { RuleConfig } from './rule.schema.js';
 
 const sharedRule = {
   plugin: 'plugin',

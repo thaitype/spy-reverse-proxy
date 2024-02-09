@@ -1,5 +1,5 @@
-import { server } from './server';
-import { extractErorMessage } from './utils/utils';
+import { server } from './server.js';
+import { extractErorMessage } from './utils/utils.js';
 
 server().catch(error => {
   console.error(extractErorMessage(error));

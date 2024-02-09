@@ -1,7 +1,7 @@
-import { logger } from '@/logger';
-import type { HandleResponseParams } from '../spy-rule-plugin';
-import { ResponseTransformerExpression } from './response-transformer-expression';
-import type { Rule } from '../rule.schema';
+import { logger } from '@/logger/index.js';
+import type { HandleResponseParams } from '../spy-rule-plugin.js';
+import { ResponseTransformerExpression } from './response-transformer-expression.js';
+import type { Rule } from '../rule.schema.js';
 
 export class ResponseTransformerPlugin {
   static name = 'response-transformer';

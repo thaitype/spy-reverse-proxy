@@ -1,5 +1,5 @@
 import type { IncomingMessage } from 'node:http';
-import { trimStartAndEndSlash } from '@/utils';
+import { trimStartAndEndSlash } from '@/utils/index.js';
 
 export function isMatchedRule(
   rule: {
