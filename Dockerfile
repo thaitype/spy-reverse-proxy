@@ -20,6 +20,8 @@ USER node
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
+# Remove devDependencies
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
 
 ###################
@@ -30,15 +32,15 @@ RUN pnpm run build
 FROM alpine:3.19 As production
 
 ENV PORT=3333
-ENV NODE_VERSION 20.11.0-r0
-ENV NPM_VERSION 10.2.5-r0
+ENV NODE_VERSION 20.11.1-r0
+# ENV NPM_VERSION 10.2.5-r0
 
 # Make sure `"type": "module"` is set in package.json
 COPY --from=build /app/package.json /app/package.json
 # Production dependencies
-# COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/node_modules /app/node_modules
 # Application
-COPY --from=build /app/dist /app
+COPY --from=build /app/dist/src /app
 
 # COPY --from=prod-deps /app/node_modules /app/node_modules
 # COPY --from=build /app/dist /app
@@ -76,4 +78,4 @@ RUN chown node .srp
 
 USER node
 
-CMD [ "node", "app/main.cjs" ]
+CMD [ "node", "app/main.js" ]
