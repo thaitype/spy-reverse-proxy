@@ -1,3 +1,4 @@
+import type { RuleConfig } from '@/plugins/rule.schema.js';
 import { ZodError } from 'zod';
 import { fromZodError } from 'zod-validation-error';
 
@@ -13,4 +14,13 @@ export function extractErorMessage(error: unknown): string {
   }
 
   return String(error);
+}
+
+export function mergeRuleConfig(ruleConfig: RuleConfig, newRuleConfig: RuleConfig): RuleConfig {
+  const mergedRuleConfig: RuleConfig = {
+    rules: { ...ruleConfig.rules, ...newRuleConfig.rules },
+    errorMessages: [...ruleConfig.errorMessages, ...newRuleConfig.errorMessages],
+  };
+
+  return mergedRuleConfig;
 }

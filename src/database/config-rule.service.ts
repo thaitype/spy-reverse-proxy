@@ -15,17 +15,18 @@ export class SpyConfigRuleService {
   async listAllMatchUpstreamUrlRules(upstreamUrl: string) {
     const url = trimStartAndEndSlash(upstreamUrl);
     await this.tableClient.createTable();
-    return this.tableClient.list(
-      this.oDataExpresion
-        .filter(p =>
-          p.upstreamUrl
-            .$equals('')
-            .or(p.upstreamUrl.$equals(null))
-            .or(p.upstreamUrl.$equals(url))
-            .or(p.upstreamUrl.$equals(`${url}/`))
-        )
-        .build()
-    );
+    const filterQuery = this.oDataExpresion
+      .filter(p =>
+        p.upstreamUrl
+          .$equals('')
+          .or(p.upstreamUrl.$equals(url))
+          .or(p.upstreamUrl.$equals(`${url}/`))
+      )
+      .build();
+    logger.debug(`Filter query: ${JSON.stringify(filterQuery, null, 2)}`);
+    return this.tableClient.list({
+      filter: filterQuery.filter,
+    });
   }
 
   async insertRule(rule: Omit<SpyConfigRuleEntityAzureTable, 'partitionKey' | 'rowKey'>) {
