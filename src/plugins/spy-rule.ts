@@ -123,6 +123,10 @@ export class SpyRule {
     const method = rule.method?.toLowerCase() ?? undefined;
     const path = rule.path?.toLowerCase() ?? undefined;
     return [
+      // Add Upstream URL,
+      ...(rule.upstreamUrl ? [rule.upstreamUrl] : []),
+      // Add the rule name,
+      ...(rule.ruleName ? [rule.ruleName] : []),
       // Add the plugin,
       ...(plugin ? [plugin] : []),
       // Add the path,
