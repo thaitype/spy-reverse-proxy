@@ -1,14 +1,16 @@
-import { initSampleRule, spyConfigRuleService } from '../database';
-import { env } from '../environment';
-import { httpLogger, logger, stringLogger } from '../logger';
+import { initSampleRule, spyConfigRuleService } from '../database/index.js';
+import { env } from '../environment/index.js';
+import { httpLogger, logger, stringLogger } from '../logger/index.js';
 import type express from 'express';
-import { spyMiddleware } from './spy-middleware';
-import type { SpyConfigRuleEntityAzureTable } from '@/entities';
-import { SpyRule } from './spy-rule';
-import { cache } from '@/cache';
-import type { RuleConfig } from './rule.schema';
-import { ruleConfigSchema } from './rule.schema';
+import { spyMiddleware } from './spy-middleware.js';
+import type { SpyConfigRuleEntityAzureTable } from '@/entities/index.js';
+import { SpyRule } from './spy-rule.js';
+import { cache } from '@/cache/index.js';
+import type { RuleConfig } from './rule.schema.js';
+import { ruleConfigSchema } from './rule.schema.js';
 import { DataViewer, DataContainer } from '@thaitype/data-viewer-server';
+import { mergeRuleConfig } from '@/utils/utils.js';
+import { RestError } from '@azure/data-tables';
 
 export async function initRulePlugin() {
   logger.info('Connecting to Azure Table');
@@ -57,7 +59,7 @@ export function defineRuleReport(rules: RuleConfig): DataContainer {
 }
 
 export async function registerSpyPlugin(app: express.Express) {
-  await initRulePlugin();
+  const initRuleResult = await initRulePlugin();
   const dataViewer = new DataViewer({
     path: env.srpAdminRootPath,
     logger: stringLogger,
@@ -71,7 +73,7 @@ export async function registerSpyPlugin(app: express.Express) {
       forceReset: true,
     });
     // Set dataViewer to show the new rule
-    dataViewer.set(defineRuleReport(result));
+    dataViewer.set(defineRuleReport(mergeRuleConfig(initRuleResult, result)));
     logger.info('Revalidate spyConfig');
     next();
   });
@@ -82,19 +84,34 @@ export async function registerSpyPlugin(app: express.Express) {
   app.use(spyMiddleware);
 }
 
+async function getSpyConfigRule(upstreamUrl: string) {
+  const rules: SpyConfigRuleEntityAzureTable[] = [];
+  try {
+    const rawRules = await spyConfigRuleService.listAllMatchUpstreamUrlRules(upstreamUrl);
+    // TODO: Fix later, this might be slow if there are many rules
+    for await (const rawRule of rawRules) {
+      rules.push(rawRule);
+    }
+  } catch (e) {
+    if(e instanceof RestError) {
+      logger.error(`Error getting spyConfig rule: ${e.message} \n ${e.stack}`);
+    } else if(e instanceof Error) {
+      logger.error(`Error getting spyConfig rule: ${e.message} \n ${e.stack}`);
+    } else {
+      logger.error('Unknown error, ' + String(e));
+    }
+    throw e;
+  }
+  return rules;
+}
+
 /**
  * Responds to the root admin path
  * - Revalidate rule from data store and cache it.
  */
 
 export async function parseSpyConfig(upstreamUrl: string): Promise<RuleConfig> {
-  const rawRules = await spyConfigRuleService.listAllMatchUpstreamUrlRules(upstreamUrl);
-  const rules: SpyConfigRuleEntityAzureTable[] = [];
-  // TODO: Fix later, this might be slow if there are many rules
-  for await (const rawRule of rawRules) {
-    rules.push(rawRule);
-  }
-
+  const rules = await getSpyConfigRule(upstreamUrl);
   try {
     return new SpyRule(rules).parse();
   } catch (e) {

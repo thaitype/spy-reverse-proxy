@@ -1,2 +1,2 @@
-export * from './azure-table';
-export * from './config-rule.service';
+export * from './azure-table.js';
+export * from './config-rule.service.js';

@@ -1,7 +1,7 @@
 import express from 'express';
-import { env } from '@/environment';
-import { logger } from '@/logger';
-import { registerSpyPlugin } from './plugins';
+import { env } from '@/environment/env.js';
+import { logger } from '@/logger/logger.js';
+import { registerSpyPlugin } from './plugins/index.js';
 
 export async function server() {
   const app = express();

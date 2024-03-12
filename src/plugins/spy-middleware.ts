@@ -1,8 +1,8 @@
 import type { Options as HttpProxyMiddlewareOptions } from 'http-proxy-middleware';
 import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware';
-import { env } from '@/environment';
-import { stringLogger } from '@/logger';
-import { SpyRulePlugin } from './spy-rule-plugin';
+import { env } from '@/environment/env.js';
+import { stringLogger } from '@/logger/logger.js';
+import { SpyRulePlugin } from './spy-rule-plugin.js';
 /**
  * Configure proxy middleware
  */

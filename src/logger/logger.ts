@@ -1,6 +1,6 @@
-import { env } from '@/environment';
-import pino from 'pino';
-import pinoHttp from 'pino-http';
+import { env } from '@/environment/index.js';
+import { pino } from 'pino';
+import { pinoHttp } from 'pino-http';
 import fs from 'fs';
 
 const logDir = '.srp/logs';

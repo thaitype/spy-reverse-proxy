@@ -1,11 +1,11 @@
-import { logger } from '@/logger';
-import type { SpyConfigRuleEntityAzureTable } from '../entities/spy-config-rule.entity';
-import { AzureTable } from './azure-table';
+import { logger } from '@/logger/index.js';
+import type { SpyConfigRuleEntityAzureTable } from '../entities/spy-config-rule.entity.js';
+import { AzureTable } from './azure-table.js';
 import invariant from 'tiny-invariant';
 import { TableClient } from '@azure/data-tables';
-import { env } from '@/environment';
+import { env } from '@/environment/index.js';
 import { ODataExpression } from 'ts-odata-client';
-import { trimStartAndEndSlash } from '@/utils';
+import { trimStartAndEndSlash } from '@/utils/index.js';
 
 export class SpyConfigRuleService {
   private oDataExpresion = ODataExpression.forV4<SpyConfigRuleEntityAzureTable>();
@@ -15,17 +15,18 @@ export class SpyConfigRuleService {
   async listAllMatchUpstreamUrlRules(upstreamUrl: string) {
     const url = trimStartAndEndSlash(upstreamUrl);
     await this.tableClient.createTable();
-    return this.tableClient.list(
-      this.oDataExpresion
-        .filter(p =>
-          p.upstreamUrl
-            .$equals('')
-            .or(p.upstreamUrl.$equals(null))
-            .or(p.upstreamUrl.$equals(url))
-            .or(p.upstreamUrl.$equals(`${url}/`))
-        )
-        .build()
-    );
+    const filterQuery = this.oDataExpresion
+      .filter(p =>
+        p.upstreamUrl
+          .$equals('')
+          .or(p.upstreamUrl.$equals(url))
+          .or(p.upstreamUrl.$equals(`${url}/`))
+      )
+      .build();
+    logger.debug(`Filter query: ${JSON.stringify(filterQuery, null, 2)}`);
+    return this.tableClient.list({
+      filter: filterQuery.filter,
+    });
   }
 
   async insertRule(rule: Omit<SpyConfigRuleEntityAzureTable, 'partitionKey' | 'rowKey'>) {

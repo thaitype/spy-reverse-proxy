@@ -1,6 +1,6 @@
-import type { Rule } from '../rule.schema';
-import type { HandleResponseParams } from '../spy-rule-plugin';
-import { ReplaceStatusCodeActionExpression } from './action-expressions';
+import type { Rule } from '../rule.schema.js';
+import type { HandleResponseParams } from '../spy-rule-plugin.js';
+import { ReplaceStatusCodeActionExpression } from './action-expressions/index.js';
 
 export type ExpressionValidateResult =
   | {

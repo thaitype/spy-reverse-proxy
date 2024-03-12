@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { isMatchedRule } from './rule-matcher';
+import { isMatchedRule } from './rule-matcher.js';
 import httpMocks from 'node-mocks-http';
 
 const sharedRule = {

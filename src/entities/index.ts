@@ -1,1 +1,1 @@
-export * from './spy-config-rule.entity';
+export * from './spy-config-rule.entity.js';
